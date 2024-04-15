@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"myapp/pkg/config"
-	"myapp/pkg/model"
+	"golang-kafka-kubernetes-microservice/pkg/config"
+	"golang-kafka-kubernetes-microservice/pkg/model"
 )
 
 // Repository represents the data access layer

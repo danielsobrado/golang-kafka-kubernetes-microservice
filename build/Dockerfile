@@ -14,10 +14,10 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o myapp cmd/server/main.go
+RUN go build -o golang-kafka-kubernetes-microservice cmd/server/main.go
 
 # Expose the port on which the application will run
 EXPOSE 8080
 
 # Run the application when the container starts
-CMD ["./myapp"]
+CMD ["./golang-kafka-kubernetes-microservice"]

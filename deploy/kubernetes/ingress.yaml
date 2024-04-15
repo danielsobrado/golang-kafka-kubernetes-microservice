@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: myapp
+  name: golang-kafka-kubernetes-microservice
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
-  - host: myapp.example.com
+  - host: golang-kafka-kubernetes-microservice.example.com
     http:
       paths:
       - path: /api(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: myapp
+            name: golang-kafka-kubernetes-microservice
             port:
               number: 80

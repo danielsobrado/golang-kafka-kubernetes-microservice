@@ -30,9 +30,9 @@ It connects to a Kafka topic and uses a PostgreSQL database.
    - Kafka
 
 2. Generate the server code from the OpenAPI specification: 
-   ``` swagger generate server -f api/openapi.yaml -A myapp -t pkg/handler/generated ```
+   ``` swagger generate server -f api/openapi.yaml -A golang-kafka-kubernetes-microservice -t pkg/handler/generated ```
 3. Update the configuration in the .env file.
-4. Build and run the microservice: ``` go build -o myapp cmd/server/main.go ./myapp ```
+4. Build and run the microservice: ``` go build -o golang-kafka-kubernetes-microservice cmd/server/main.go ./golang-kafka-kubernetes-microservice ```
 5. Access the API endpoints using the generated Swagger UI or by sending requests to the appropriate URLs.
    
 ## Database Migrations

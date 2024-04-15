@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"myapp/pkg/model"
-	"myapp/pkg/service"
+	"golang-kafka-kubernetes-microservice/pkg/model"
+	"golang-kafka-kubernetes-microservice/pkg/service"
 
 	"github.com/go-chi/chi"
 )

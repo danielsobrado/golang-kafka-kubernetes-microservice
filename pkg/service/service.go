@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"myapp/pkg/model"
-	"myapp/pkg/repository"
+	"golang-kafka-kubernetes-microservice/pkg/model"
+	"golang-kafka-kubernetes-microservice/pkg/repository"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )

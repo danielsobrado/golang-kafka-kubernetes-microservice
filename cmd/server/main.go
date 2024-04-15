@@ -10,12 +10,12 @@ import (
 	"syscall"
 	"time"
 
-	"myapp/pkg/config"
-	"myapp/pkg/db"
-	"myapp/pkg/handler"
-	"myapp/pkg/kafka"
-	"myapp/pkg/repository"
-	"myapp/pkg/service"
+	"golang-kafka-kubernetes-microservice/pkg/config"
+	"golang-kafka-kubernetes-microservice/pkg/db"
+	"golang-kafka-kubernetes-microservice/pkg/handler"
+	"golang-kafka-kubernetes-microservice/pkg/kafka"
+	"golang-kafka-kubernetes-microservice/pkg/repository"
+	"golang-kafka-kubernetes-microservice/pkg/service"
 )
 
 func main() {
