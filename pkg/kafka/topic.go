@@ -1,4 +1,4 @@
-package kafkac
+package kafka
 
 import (
 	"fmt"

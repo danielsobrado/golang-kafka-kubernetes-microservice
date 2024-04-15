@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-
 	"golang-kafka-kubernetes-microservice/pkg/config"
 	"golang-kafka-kubernetes-microservice/pkg/model"
 )
@@ -24,7 +23,7 @@ func NewRepository(db *sql.DB, config *config.Config) *Repository {
 
 // GetAllUsers retrieves all users from the database
 func (r *Repository) GetAllUsers() ([]*model.User, error) {
-	query := r.config.GetString("query.getAllUsers")
+	query := r.config.DatabaseQueries.GetAllUsers
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %v", err)
@@ -39,7 +38,6 @@ func (r *Repository) GetAllUsers() ([]*model.User, error) {
 		}
 		users = append(users, &user)
 	}
-
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("failed to iterate over rows: %v", err)
 	}
@@ -49,7 +47,7 @@ func (r *Repository) GetAllUsers() ([]*model.User, error) {
 
 // GetUserByID retrieves a user by ID from the database
 func (r *Repository) GetUserByID(userID int) (*model.User, error) {
-	query := r.config.GetString("query.getUserByID")
+	query := r.config.DatabaseQueries.GetUserByID
 	row := r.db.QueryRow(query, userID)
 
 	var user model.User
@@ -65,7 +63,7 @@ func (r *Repository) GetUserByID(userID int) (*model.User, error) {
 
 // CreateOrder creates a new order in the database
 func (r *Repository) CreateOrder(order *model.Order) error {
-	query := r.config.GetString("query.createOrder")
+	query := r.config.DatabaseQueries.CreateOrder
 	err := r.db.QueryRow(query, order.UserID, order.Total, order.Status, order.CreatedAt).Scan(&order.ID)
 	if err != nil {
 		return fmt.Errorf("failed to create order: %v", err)

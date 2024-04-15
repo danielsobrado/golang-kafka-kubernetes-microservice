@@ -1,4 +1,4 @@
-package kafkac
+package kafka
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
+// See: https://github.com/confluentinc/confluent-kafka-go/issues/1014
 // Consumer represents a Kafka consumer
 type Consumer struct {
 	consumer *kafka.Consumer

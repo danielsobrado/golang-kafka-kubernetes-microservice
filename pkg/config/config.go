@@ -12,6 +12,12 @@ type Config struct {
 	DatabaseURL           string
 	KafkaBootstrapServers string
 	KafkaTopic            string
+
+	DatabaseQueries struct {
+		GetAllUsers string
+		GetUserByID string
+		CreateOrder string
+	}
 }
 
 // LoadConfig loads the configuration from the application.properties file
