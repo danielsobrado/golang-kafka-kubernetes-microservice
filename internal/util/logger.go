@@ -1,16 +1,16 @@
 package util
 
 import (
+	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 var (
-	// Logger is the global logger instance
 	Logger *zap.Logger
 )
 
-// InitLogger initializes the global logger instance
 func InitLogger(logLevel string, logFormat string) error {
 	level := zap.NewAtomicLevel()
 	if err := level.UnmarshalText([]byte(logLevel)); err != nil {

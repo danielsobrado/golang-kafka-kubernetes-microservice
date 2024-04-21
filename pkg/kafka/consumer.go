@@ -7,13 +7,11 @@ import (
 )
 
 // See: https://github.com/confluentinc/confluent-kafka-go/issues/1014
-// Consumer represents a Kafka consumer
 type Consumer struct {
 	consumer *kafka.Consumer
 	topic    string
 }
 
-// NewConsumer creates a new instance of the Kafka consumer
 func NewConsumer(bootstrapServers string, groupID string, topic string) (*Consumer, error) {
 	config := &kafka.ConfigMap{
 		"bootstrap.servers": bootstrapServers,
@@ -32,7 +30,6 @@ func NewConsumer(bootstrapServers string, groupID string, topic string) (*Consum
 	}, nil
 }
 
-// Consume starts consuming messages from the Kafka topic
 func (c *Consumer) Consume(handler func(message *kafka.Message)) error {
 	if err := c.consumer.Subscribe(c.topic, nil); err != nil {
 		return fmt.Errorf("failed to subscribe to Kafka topic: %v", err)
@@ -48,7 +45,6 @@ func (c *Consumer) Consume(handler func(message *kafka.Message)) error {
 	}
 }
 
-// Close closes the Kafka consumer
 func (c *Consumer) Close() {
 	c.consumer.Close()
 }

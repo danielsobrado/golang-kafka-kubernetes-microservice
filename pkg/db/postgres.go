@@ -8,12 +8,10 @@ import (
 	"github.com/pressly/goose"
 )
 
-// PostgresDB represents a PostgreSQL database connection
 type PostgresDB struct {
 	*sql.DB
 }
 
-// NewPostgresDB creates a new PostgreSQL database connection
 func NewPostgresDB(dbURL string) (*PostgresDB, error) {
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
@@ -31,7 +29,6 @@ func NewPostgresDB(dbURL string) (*PostgresDB, error) {
 	return &PostgresDB{db}, nil
 }
 
-// migrateDB applies database migrations using Goose
 func migrateDB(db *sql.DB) error {
 	goose.SetDialect("postgres")
 

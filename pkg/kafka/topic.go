@@ -6,7 +6,6 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
-// EnsureTopicExists creates the specified Kafka topic if it doesn't exist
 func EnsureTopicExists(bootstrapServers string, topic string, numPartitions int, replicationFactor int) error {
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
 		"bootstrap.servers": bootstrapServers,
