@@ -6,7 +6,6 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
-// See: https://github.com/confluentinc/confluent-kafka-go/issues/1014
 type Consumer struct {
 	consumer *kafka.Consumer
 	topic    string
@@ -43,6 +42,11 @@ func (c *Consumer) Consume(handler func(message *kafka.Message)) error {
 
 		handler(msg)
 	}
+}
+
+func (c *Consumer) Stop() {
+	c.consumer.Unsubscribe()
+	c.consumer.Close()
 }
 
 func (c *Consumer) Close() {

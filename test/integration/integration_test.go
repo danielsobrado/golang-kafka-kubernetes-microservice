@@ -20,14 +20,14 @@ func TestGetAllUsers(t *testing.T) {
 		t.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	db, err := db.NewPostgresDB(cfg.GetString("test.database.url"))
+	db, err := db.NewPostgresDB(cfg.DatabaseURL)
 	if err != nil {
 		t.Fatalf("Failed to connect to test database: %v", err)
 	}
 	defer db.Close()
 
-	repo := repository.NewRepository(db)
-	svc := service.NewService(repo)
+	repo := repository.NewRepository(db, cfg)
+	svc := service.NewService(repo, cfg.KafkaBootstrapServers, cfg.KafkaTopic)
 
 	server := httptest.NewServer(handler.NewHandler(svc))
 	defer server.Close()

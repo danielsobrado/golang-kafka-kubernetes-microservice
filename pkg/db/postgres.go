@@ -8,11 +8,7 @@ import (
 	"github.com/pressly/goose"
 )
 
-type PostgresDB struct {
-	*sql.DB
-}
-
-func NewPostgresDB(dbURL string) (*PostgresDB, error) {
+func NewPostgresDB(dbURL string) (*sql.DB, error) {
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %v", err)
@@ -26,7 +22,7 @@ func NewPostgresDB(dbURL string) (*PostgresDB, error) {
 		return nil, fmt.Errorf("failed to migrate database: %v", err)
 	}
 
-	return &PostgresDB{db}, nil
+	return db, nil
 }
 
 func migrateDB(db *sql.DB) error {

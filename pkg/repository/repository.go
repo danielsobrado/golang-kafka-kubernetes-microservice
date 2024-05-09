@@ -66,3 +66,17 @@ func (r *Repository) CreateOrder(order *model.Order) error {
 
 	return nil
 }
+
+func (r *Repository) UpdateUser(user *model.User) error {
+	query := `
+        UPDATE users
+        SET name = $1, email = $2, balance = $3
+        WHERE id = $4
+    `
+	_, err := r.db.Exec(query, user.Name, user.Email, user.Balance, user.ID)
+	if err != nil {
+		return fmt.Errorf("failed to update user: %v", err)
+	}
+
+	return nil
+}

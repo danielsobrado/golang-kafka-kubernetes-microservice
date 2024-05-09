@@ -14,13 +14,26 @@ import (
 // Handler represents the HTTP handler for the microservice
 type Handler struct {
 	service *service.Service
+	router  *chi.Mux
 }
 
 // NewHandler creates a new instance of the Handler
 func NewHandler(service *service.Service) *Handler {
-	return &Handler{
+	h := &Handler{
 		service: service,
+		router:  chi.NewRouter(),
 	}
+
+	h.router.Get("/users", h.GetUsers)
+	h.router.Get("/users/{id}", h.GetUserByID)
+	h.router.Post("/orders", h.CreateOrder)
+
+	return h
+}
+
+// ServeHTTP implements the http.Handler interface
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.router.ServeHTTP(w, r)
 }
 
 // GetUsers handles the request to get all users

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,13 +15,16 @@ import (
 	"golang-kafka-kubernetes-microservice/pkg/db"
 	"golang-kafka-kubernetes-microservice/pkg/handler"
 	"golang-kafka-kubernetes-microservice/pkg/kafka"
+	"golang-kafka-kubernetes-microservice/pkg/model"
 	"golang-kafka-kubernetes-microservice/pkg/repository"
 	"golang-kafka-kubernetes-microservice/pkg/service"
+
+	kafkaClient "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 func main() {
 	// Load configuration
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfig("application.properties")
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
@@ -36,18 +40,18 @@ func main() {
 	defer db.Close()
 
 	// Ensure Kafka topic exists
-	if err := kafka.EnsureTopicExists(cfg.KafkaBootstrapServers, cfg.KafkaTopic); err != nil {
+	if err := kafka.EnsureTopicExists(cfg.KafkaBootstrapServers, cfg.KafkaTopic, 1, 1); err != nil {
 		logger.Fatalf("Failed to ensure Kafka topic exists: %v", err)
 	}
 
 	// Create repository instance
-	repo := repository.NewRepository(db)
+	repo := repository.NewRepository(db, cfg)
 
 	// Create service instance
-	svc := service.NewService(repo)
+	svc := service.NewService(repo, cfg.KafkaBootstrapServers, cfg.KafkaTopic)
 
 	// Create Kafka consumer instance
-	consumer, err := kafka.NewConsumer(cfg.KafkaBootstrapServers, cfg.KafkaTopic, svc)
+	consumer, err := kafka.NewConsumer(cfg.KafkaBootstrapServers, cfg.KafkaConsumerGroupID, cfg.KafkaTopic)
 	if err != nil {
 		logger.Fatalf("Failed to create Kafka consumer: %v", err)
 	}
@@ -76,7 +80,17 @@ func main() {
 	// Start Kafka consumer
 	go func() {
 		logger.Printf("Starting Kafka consumer")
-		if err := consumer.Start(); err != nil {
+		if err := consumer.Consume(func(message *kafkaClient.Message) {
+			var order model.Order
+			if err := json.Unmarshal(message.Value, &order); err != nil {
+				logger.Printf("Failed to unmarshal Kafka message: %v", err)
+				return
+			}
+
+			if err := svc.ProcessOrder(&order); err != nil {
+				logger.Printf("Failed to process order: %v", err)
+			}
+		}); err != nil {
 			logger.Fatalf("Failed to start Kafka consumer: %v", err)
 		}
 	}()

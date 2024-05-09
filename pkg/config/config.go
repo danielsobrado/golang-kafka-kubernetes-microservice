@@ -12,6 +12,7 @@ type Config struct {
 	DatabaseURL           string
 	KafkaBootstrapServers string
 	KafkaTopic            string
+	KafkaConsumerGroupID  string
 
 	DatabaseQueries struct {
 		GetAllUsers string
@@ -47,10 +48,16 @@ func LoadConfig(filePath string) (*Config, error) {
 		return nil, fmt.Errorf("missing Kafka topic property")
 	}
 
+	kafkaConsumerGroupID := props.GetString("kafka.consumer.group.id", "")
+	if kafkaConsumerGroupID == "" {
+		return nil, fmt.Errorf("missing Kafka consumer group ID property")
+	}
+
 	return &Config{
 		ServerPort:            serverPort,
 		DatabaseURL:           dbURL,
 		KafkaBootstrapServers: kafkaBootstrapServers,
 		KafkaTopic:            kafkaTopic,
+		KafkaConsumerGroupID:  kafkaConsumerGroupID,
 	}, nil
 }

@@ -10,12 +10,16 @@ import (
 )
 
 type Service struct {
-	repo *repository.Repository
+	repo                  *repository.Repository
+	kafkaBootstrapServers string
+	kafkaTopic            string
 }
 
-func NewService(repo *repository.Repository) *Service {
+func NewService(repo *repository.Repository, kafkaBootstrapServers string, kafkaTopic string) *Service {
 	return &Service{
-		repo: repo,
+		repo:                  repo,
+		kafkaBootstrapServers: kafkaBootstrapServers,
+		kafkaTopic:            kafkaTopic,
 	}
 }
 
@@ -27,30 +31,36 @@ func (s *Service) GetUserByID(userID int) (*model.User, error) {
 	return s.repo.GetUserByID(userID)
 }
 
-func (s *Service) CreateOrder(order *model.Order) error {
+func (s *Service) CreateOrder(order *model.Order) (*model.Order, error) {
 	user, err := s.repo.GetUserByID(order.UserID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if user.Balance < order.Total {
-		return fmt.Errorf("insufficient funds")
+		return nil, fmt.Errorf("insufficient funds")
 	}
 
 	if err := s.repo.CreateOrder(order); err != nil {
-		return err
+		return nil, err
 	}
 
 	user.Balance -= order.Total
 	if err := s.repo.UpdateUser(user); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	if err := s.ProcessOrder(order); err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
 
 func (s *Service) ProcessOrder(order *model.Order) error {
-	producer, err := kafka.NewProducer(kafkaBootstrapServers)
+	producer, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": s.kafkaBootstrapServers,
+	})
 	if err != nil {
 		return err
 	}
@@ -61,7 +71,11 @@ func (s *Service) ProcessOrder(order *model.Order) error {
 		return err
 	}
 
-	if err := producer.Produce(kafkaTopic, orderJSON); err != nil {
+	message := &kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &s.kafkaTopic, Partition: kafka.PartitionAny},
+		Value:          orderJSON,
+	}
+	if err := producer.Produce(message, nil); err != nil {
 		return err
 	}
 

@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -29,7 +30,8 @@ func EnsureTopicExists(bootstrapServers string, topic string, numPartitions int,
 			},
 		}
 
-		if _, err := adminClient.CreateTopics(topicConfig); err != nil {
+		ctx := context.Background()
+		if _, err := adminClient.CreateTopics(ctx, topicConfig); err != nil {
 			return fmt.Errorf("failed to create Kafka topic: %v", err)
 		}
 	}
