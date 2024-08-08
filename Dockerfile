@@ -25,7 +25,6 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 COPY . .
 
 # Build the application
-# Note: Go 1.22 has improved build caching, so we don't need to explicitly disable it
 RUN CGO_ENABLED=1 GOOS=linux go build -o main cmd/server/main.go
 
 # Use a smaller base image for the final stage
@@ -43,6 +42,9 @@ WORKDIR /root/
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/application.properties .
+
+# Create directory for Kafka secrets
+RUN mkdir -p /etc/kafka/secrets
 
 # Expose the port the app runs on
 EXPOSE 8080
